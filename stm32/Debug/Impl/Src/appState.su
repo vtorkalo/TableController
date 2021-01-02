@@ -1,0 +1,4 @@
+appState.c:4:6:initAppState	8	static
+appState.c:9:10:getStateChecksum	40	static
+appState.c:19:6:SaveState	24	static
+appState.c:29:6:LoadState	40	static
