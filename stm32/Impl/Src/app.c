@@ -12,8 +12,6 @@ uint8_t readbyte = 0;
 void appInit(void) {
 	initAppState();
 	initEncoder();
-
-
 	HAL_TIM_Base_Start_IT(&htim2);
 }
 

@@ -74,16 +74,14 @@ void buttonDown(uint8_t button) {
 }
 
 void buttonUp(uint8_t button) {
-	if (stopFlag) {
-		stopFlag = false;
-		return;
-	}
-
 	if (button == 0 || button == 1) {
 		motorStop();
 		return;
 	}
-
+	if (stopFlag) {
+		stopFlag = false;
+		return;
+	}
 	if (button == 2) {
 		goToPos(state.position.motor1memory1);
 		return;
@@ -97,36 +95,33 @@ void buttonUp(uint8_t button) {
 		return;
 	}
 
-
 }
 
 void buttonLongDown(uint8_t button) {
-	if (buttonState[0] && buttonState[1] && !stopFlag) {
-		FindZero();
+	if (buttonState[0] && buttonState[1] && button == 1) {
+		state.position.motor1speed = state.position.motor1speed == LOW_SPEED ? HIGH_SPEED : LOW_SPEED;
+		state.motorBeepFlag = 1;
+		return;
 	}
 	if (button == 2) {
-				state.position.motor1memory1 = state.position.motor1pos;
-				saveStateFlag = true;
-				state.motorBeepFlag = 1;
-				return;
-			}
-			if (button == 3) {
-				state.position.motor1memory2 = state.position.motor1pos;
-				saveStateFlag = true;
-				state.motorBeepFlag = 1;
-				return;
-			}
-			if (button == 4) {
-				state.position.motor1memory3 = state.position.motor1pos;
-				saveStateFlag = true;
-				state.motorBeepFlag = 1;
-				return;
-			}
+		state.position.motor1memory1 = state.position.motor1pos;
+		state.motorBeepFlag = 1;
+		return;
+	}
+	if (button == 3) {
+		state.position.motor1memory2 = state.position.motor1pos;
+		state.motorBeepFlag = 1;
+		return;
+	}
+	if (button == 4) {
+		state.position.motor1memory3 = state.position.motor1pos;
+		state.motorBeepFlag = 1;
+		return;
+	}
 }
 
 void buttonUpAfterLongPress(uint8_t button) {
 	if (button == 0 || button == 1) {
-		if (state.currentAction != FIND_ZERO && state.currentAction != FIND_MAX)
 			motorStop();
 		return;
 	}

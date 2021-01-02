@@ -1,5 +1,0 @@
-buttons.c:17:6:updateButtons	16	static
-buttons.c:58:6:buttonDown	16	static
-buttons.c:76:6:buttonUp	16	static
-buttons.c:103:6:buttonLongDown	16	static
-buttons.c:127:6:buttonUpAfterLongPress	16	static

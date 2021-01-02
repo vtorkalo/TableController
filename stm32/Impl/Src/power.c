@@ -145,6 +145,5 @@ void motorStop(void) {
 	state.motorDirection = NONE;
 	state.currentAction = IDLE;
 	bridgeOff();
-	saveStateFlag = 1;
 }
 

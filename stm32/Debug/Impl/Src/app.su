@@ -1,3 +1,0 @@
-app.c:12:6:appInit	8	static
-app.c:20:6:timer	8	static
-app.c:27:6:mainLoop	8	static

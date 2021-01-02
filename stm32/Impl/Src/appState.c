@@ -3,7 +3,6 @@
 
 void initAppState() {
 	LoadState();
-
 }
 
 uint32_t getStateChecksum(struct Position s) {
