@@ -6,6 +6,7 @@
 void bridgeLeft(void);
 void bridgeRight(void);
 void bridgeOff(void);
+void updatePwmWidth(void);
 
 
 #endif

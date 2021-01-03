@@ -4,8 +4,11 @@
 #include <appState.h>
 #include <stdint.h>
 
+uint8_t pwmWidth = 80;
+static void setPwmWidth(uint8_t width);
+
 void bridgeLeft() {
-	setPwmWidth();
+	updatePwmWidth();
 	HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_3); //LEFT HIGH
 	HAL_TIM_PWM_Stop_IT(&htim3, TIM_CHANNEL_4); //RIGHT HIGH
 
@@ -15,22 +18,40 @@ void bridgeLeft() {
 			GPIO_PIN_RESET);
 }
 
-void setPwmWidth() {
-	uint8_t pwmWidth;
+uint32_t pwmUpdateCounter = 0;
+
+void updatePwmWidth() {
+	int16_t expectedPeriod;
 	switch (state.position.motor1speed) {
 	case LOW_SPEED:
-		pwmWidth = 40;
+		expectedPeriod = 250;
 		break;
 	case HIGH_SPEED:
-		pwmWidth = 128;
-		break;
+		setPwmWidth(pwmWidth);
+		expectedPeriod = 110;
+		return;
 	}
-	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, pwmWidth);
-	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, pwmWidth);
+
+	pwmUpdateCounter++;
+	if (pwmUpdateCounter > 10) {
+		pwmUpdateCounter = 0;
+		if (state.rotationPeriod - expectedPeriod > 10 && pwmWidth < 128) {
+			pwmWidth++;
+		} else if (expectedPeriod - state.rotationPeriod > 10 && pwmWidth > 0) {
+			pwmWidth--;
+		}
+	}
+
+	setPwmWidth(pwmWidth);
+}
+
+void setPwmWidth(uint8_t width)
+{
+	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, width);
+	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, width);
 }
 
 void bridgeRight() {
-	setPwmWidth();
 	HAL_TIM_PWM_Stop_IT(&htim3, TIM_CHANNEL_3); //LEFT HIGH
 	HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_4); // RIGHT HIGH
 

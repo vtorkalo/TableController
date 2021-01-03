@@ -34,7 +34,7 @@ void updateCurrent() {
 	uint32_t ADC_raw = HAL_ADC_GetValue(&hadc1);
 	state.motor1current = ADC_raw;
 
-	handleFindZero();
+//	handleFindZero();
 
 	if (state.currentAction == FIND_POS) {
 		if (state.position.motor1pos < state.motor1targetpos) {
@@ -50,23 +50,17 @@ void updateCurrent() {
 
 }
 
-void handleMotorBeep()
-{
-	if (state.motorBeepFlag && !deadTimeFlag)
-	{
+void handleMotorBeep() {
+	if (state.motorBeepFlag && !deadTimeFlag) {
 		motorBeepTicks++;
-		if (state.motorDirection == LEFT )
-		{
+		if (state.motorDirection == LEFT) {
 			TurnOnRight();
-		}
-		else
-		{
+		} else {
 			TurnOnLeft();
 		}
-		if (motorBeepTicks == 50)
-		{
+		if (motorBeepTicks == 50) {
 			motorStop();
-			motorBeepTicks =0;
+			motorBeepTicks = 0;
 			state.motorBeepFlag = 0;
 		}
 	}
@@ -98,6 +92,11 @@ void handleFindZero() {
 }
 
 void updateBridgeState() {
+
+	if (state.motorDirection != NONE) {
+		updatePwmWidth();
+	}
+
 	if (deadTimeFlag && deadTimeTicks < 10) {
 		deadTimeTicks++;
 	}

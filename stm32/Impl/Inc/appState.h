@@ -31,6 +31,7 @@ struct AppState {
 
 
 	int16_t motor1current;
+	int32_t rotationPeriod;
 
 	bool powerFailureFlag;
 	bool powerFailureStateStored;
