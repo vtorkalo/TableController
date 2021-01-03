@@ -32,6 +32,7 @@ struct AppState {
 
 	int16_t motor1current;
 	int32_t rotationPeriod;
+	uint8_t pwmWidth;
 
 	bool powerFailureFlag;
 	bool powerFailureStateStored;

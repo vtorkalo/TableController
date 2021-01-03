@@ -4,5 +4,6 @@
 void mainLoop(void);
 void appInit(void);
 void timer(void);
+void sysTick(void);
 
 #endif

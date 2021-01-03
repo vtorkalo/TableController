@@ -6,28 +6,25 @@
 #include <powerMonitor.h>
 #include <buttons.h>
 
-uint8_t flag = 0;
-
-uint8_t readbyte = 0;
-uint32_t startDelayTicks = 0;
 void appInit(void) {
+	HAL_Delay(100);
 	initAppState();
 	initEncoder();
 
 	HAL_TIM_Base_Start_IT(&htim2);
 }
 
-void timer(void) {
-
-	if (startDelayTicks < 300) //wait for buttons capacitors charge.
-	{
-		startDelayTicks++;
-		return;
-	}
-
+void timer(void) { // 100 Hz
 	updateCurrent();
-	updatePowerMonitor();
+	updatePwmWidth();
 
+	updatePowerMonitor();
+}
+
+void sysTick(void) //1000 Hz
+{
+	handleMotorBeep();
+	updateBridgeState();
 	readEncoder();
 	updateButtons();
 }

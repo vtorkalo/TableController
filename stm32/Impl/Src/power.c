@@ -11,10 +11,7 @@ uint8_t deadTimeFlag = 0;
 uint32_t deadTimeTicks = 0;
 uint32_t motorBeepTicks = 0;
 
-static void updateBridgeState();
-//static void FindMax(void);
 static void handleFindZero(void);
-static void handleMotorBeep(void);
 
 void FindZero(void) {
 	state.currentAction = FIND_ZERO;
@@ -34,7 +31,7 @@ void updateCurrent() {
 	uint32_t ADC_raw = HAL_ADC_GetValue(&hadc1);
 	state.motor1current = ADC_raw;
 
-//	handleFindZero();
+	handleFindZero();
 
 	if (state.currentAction == FIND_POS) {
 		if (state.position.motor1pos < state.motor1targetpos) {
@@ -45,10 +42,18 @@ void updateCurrent() {
 			motorStop();
 		}
 	}
-	handleMotorBeep();
-	updateBridgeState();
-
 }
+
+void SetHighSpeed(void)
+{
+	state.position.motor1speed = HIGH_SPEED;
+}
+void SetLowSpeed(void)
+{
+	state.position.motor1speed = LOW_SPEED;
+	state.pwmWidth = 20;
+}
+
 
 void handleMotorBeep() {
 	if (state.motorBeepFlag && !deadTimeFlag) {
@@ -68,10 +73,10 @@ void handleMotorBeep() {
 
 void handleFindZero() {
 	if (state.currentAction != IDLE) {
-		if (state.motor1current < 10 && findZeroTicks <= 1000) {
+		if (state.motor1current < 10 && findZeroTicks <= 100) {
 			findZeroTicks++;
 		}
-		if (state.motor1current < 10 && findZeroTicks > 1000
+		if (state.motor1current < 10 && findZeroTicks > 100
 				&& state.motorDirection == LEFT) {
 			findZeroTicks = 0;
 			state.position.motor1pos = 0;
@@ -79,7 +84,7 @@ void handleFindZero() {
 			motorStop();
 			state.motorBeepFlag = 1;
 		}
-		if (state.motor1current < 10 && findZeroTicks > 1000
+		if (state.motor1current < 10 && findZeroTicks > 100
 				&& state.motorDirection == RIGHT) {
 			findZeroTicks = 0;
 			state.position.motor1maxpos = state.position.motor1pos;
@@ -92,11 +97,6 @@ void handleFindZero() {
 }
 
 void updateBridgeState() {
-
-	if (state.motorDirection != NONE) {
-		updatePwmWidth();
-	}
-
 	if (deadTimeFlag && deadTimeTicks < 10) {
 		deadTimeTicks++;
 	}

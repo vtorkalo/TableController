@@ -99,7 +99,11 @@ void buttonUp(uint8_t button) {
 
 void buttonLongDown(uint8_t button) {
 	if (buttonState[0] && buttonState[1] && button == 1) {
-		state.position.motor1speed = state.position.motor1speed == LOW_SPEED ? HIGH_SPEED : LOW_SPEED;
+		if (state.position.motor1speed == LOW_SPEED) {
+			SetHighSpeed();
+		} else {
+			SetLowSpeed();
+		}
 		state.motorBeepFlag = 1;
 		return;
 	}
@@ -122,7 +126,7 @@ void buttonLongDown(uint8_t button) {
 
 void buttonUpAfterLongPress(uint8_t button) {
 	if (button == 0 || button == 1) {
-			motorStop();
+		motorStop();
 		return;
 	}
 

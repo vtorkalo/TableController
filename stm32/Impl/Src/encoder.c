@@ -6,7 +6,6 @@
 GPIO_PinState motor1_prev_state;
 GPIO_PinState motor1_initial_state;
 
-uint32_t prevRotationPeriod = 999;
 uint32_t rotationPeriod = 999;
 
 void initEncoder() {
@@ -16,6 +15,10 @@ void initEncoder() {
 }
 
 void readEncoder(void) {
+	if (state.motor1current < 10)
+	{
+		return;
+	}
 	rotationPeriod++;
 	if (state.motorDirection == NONE) {
 		rotationPeriod = 0;
@@ -27,6 +30,12 @@ void readEncoder(void) {
 		if (rotationPeriod > 0) {
 			StoreMeasurment(rotationPeriod);
 			rotationPeriod = 0;
+		}
+
+		if (state.motorDirection == LEFT) {
+			state.position.motor1pos--;
+		} else if (state.motorDirection == RIGHT) {
+			state.position.motor1pos++;
 		}
 	}
 
@@ -41,17 +50,12 @@ void readEncoder(void) {
 					* GetMeasurement(CIRCLE_BUFFER_SIZE - i - 1);
 		}
 
-		prevRotationPeriod = state.rotationPeriod;
 		state.rotationPeriod = ((float) 2
 				/ ((float) (CIRCLE_BUFFER_SIZE * (CIRCLE_BUFFER_SIZE + 1))))
 				* sum;
 	}
 
-	if (state.motorDirection == LEFT) {
-		state.position.motor1pos--;
-	} else if (state.motorDirection == RIGHT) {
-		state.position.motor1pos++;
-	}
+
 
 	motor1_prev_state = motor1currentState;
 }
