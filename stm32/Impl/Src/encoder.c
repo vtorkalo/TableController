@@ -2,11 +2,12 @@
 #include "gpio.h"
 #include "appState.h"
 #include "periodCircleBuffer.h"
+#include <bridge.h>
 
 GPIO_PinState motor1_prev_state;
 GPIO_PinState motor1_initial_state;
 
-uint32_t rotationPeriod = 999;
+uint32_t rotationPeriod = 150;
 
 void initEncoder() {
 	motor1_initial_state = HAL_GPIO_ReadPin(MOTOR1_ENCODER_GPIO_Port,
@@ -22,6 +23,8 @@ void readEncoder(void) {
 	rotationPeriod++;
 	if (state.motorDirection == NONE) {
 		rotationPeriod = 0;
+		state.rotationPeriod = 0;
+		ClearBuffer();
 	}
 	GPIO_PinState motor1currentState = HAL_GPIO_ReadPin(
 	MOTOR1_ENCODER_GPIO_Port, MOTOR1_ENCODER_Pin);

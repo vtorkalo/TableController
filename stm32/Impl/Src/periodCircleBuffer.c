@@ -19,6 +19,12 @@ void StoreMeasurment(uint32_t value)
 	}
 }
 
+void ClearBuffer(void)
+{
+	isBufferFull = 0;
+	nextIndex = 0;
+}
+
 uint16_t GetRecordsCount()
 {
 	return isBufferFull ? CIRCLE_BUFFER_SIZE : nextIndex;

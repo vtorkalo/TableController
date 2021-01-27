@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 static void setPwmWidth(uint8_t width);
+static float calculatePID(int32_t error);
 
 void bridgeLeft() {
 	updatePwmWidth();
@@ -17,31 +18,68 @@ void bridgeLeft() {
 			GPIO_PIN_RESET);
 }
 
-uint32_t pwmUpdateCounter = 0;
+int16_t prevError = 0;
+float integralPrev = 0;
+const uint16_t PWM_MAX = 255;
+const uint16_t PWM_MIN = 6;
 
-void updatePwmWidth() {
+const float Kp = 0.8;
+const float Kd = 0.08;
+const float Ki = 0.01;
+
+void updatePwmWidth(void) {
 	if (state.motorDirection == NONE) {
 		return;
-
 	}
 	int16_t expectedPeriod;
 	switch (state.position.motor1speed) {
 	case LOW_SPEED:
 		expectedPeriod = 160;
 		break;
+	case MIDDLE_SPEED:
+		expectedPeriod = 80;
+		break;
 	case HIGH_SPEED:
-		setPwmWidth(128);
-		expectedPeriod = 70;
+		expectedPeriod = 80;
+		state.position.pwmWidth = PWM_MAX;
+		setPwmWidth(PWM_MAX);
 		return;
 	}
 
-	if (state.rotationPeriod - expectedPeriod > 10 && state.pwmWidth < 128) {
-		state.pwmWidth++;
-	} else if (expectedPeriod - state.rotationPeriod > 10 && state.pwmWidth > 20) {
-		state.pwmWidth--;
+	if (state.rotationPeriod > 0 && state.currentAction > 0) {
+		int32_t error = state.rotationPeriod - expectedPeriod;
+		state.position.pwmWidth = calculatePID(error);
+		prevError = error;
+	}
+	else
+	{
+		prevError = 0;
+		integralPrev = 0;
+	}
+	if (state.position.pwmWidth >= PWM_MIN
+			&& state.position.pwmWidth <= PWM_MAX) {
+		setPwmWidth((uint8_t) state.position.pwmWidth);
+	}
+}
+
+float calculatePID(int32_t error) {
+	float integralCor = integralPrev + Ki * error;
+	integralPrev = integralCor;
+
+	float correction = 0;
+	correction += integralCor;
+	correction += Kp * error;
+	correction += Kd * (error - prevError);
+
+	float newPwm = state.position.pwmWidth + correction / 10;
+
+	if (newPwm < PWM_MIN) {
+		newPwm = PWM_MIN;
+	} else if (newPwm > PWM_MAX) {
+		newPwm = PWM_MAX;
 	}
 
-	setPwmWidth(state.pwmWidth);
+	return newPwm;
 }
 
 void setPwmWidth(uint8_t width) {

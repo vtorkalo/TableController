@@ -19,12 +19,6 @@ void FindZero(void) {
 	TurnOnLeft();
 }
 
-//void FindMax(void) {
-//	state.currentAction = FIND_MAX;
-//	findZeroTicks = 0;
-//	TurnOnRight();
-//}
-
 void updateCurrent() {
 	HAL_ADC_Start(&hadc1);
 	HAL_ADC_PollForConversion(&hadc1, 100);
@@ -47,11 +41,17 @@ void updateCurrent() {
 void SetHighSpeed(void)
 {
 	state.position.motor1speed = HIGH_SPEED;
+	state.position.pwmWidth = 200;
+}
+void SetMiddleSpeed(void)
+{
+	state.position.motor1speed = MIDDLE_SPEED;
+	state.position.pwmWidth = 100;
 }
 void SetLowSpeed(void)
 {
 	state.position.motor1speed = LOW_SPEED;
-	state.pwmWidth = 20;
+	state.position.pwmWidth = 20;
 }
 
 
@@ -141,6 +141,7 @@ void TurnOnRight(void) {
 }
 
 void motorStop(void) {
+	state.rotationPeriod = 0;
 	state.motorDirection = NONE;
 	state.currentAction = IDLE;
 	bridgeOff();

@@ -3,7 +3,7 @@
 
 void initAppState() {
 	LoadState();
-	state.rotationPeriod = 9999;
+	state.rotationPeriod = 0;
 }
 
 uint32_t getStateChecksum(struct Position s) {

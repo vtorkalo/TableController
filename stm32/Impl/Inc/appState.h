@@ -13,7 +13,7 @@ enum CurrentAction {
 };
 
 enum MotorSpeed {
-	LOW_SPEED, HIGH_SPEED,
+	LOW_SPEED, MIDDLE_SPEED, HIGH_SPEED,
 };
 
 struct Position {
@@ -23,16 +23,15 @@ struct Position {
 	int16_t motor1memory2;
 	int16_t motor1memory3;
 	enum MotorSpeed motor1speed;
+	float pwmWidth;
 };
 
 struct AppState {
 	int16_t motor1targetpos;
 	struct Position position;
 
-
 	int16_t motor1current;
 	int32_t rotationPeriod;
-	uint8_t pwmWidth;
 
 	bool powerFailureFlag;
 	bool powerFailureStateStored;

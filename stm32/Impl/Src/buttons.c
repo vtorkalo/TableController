@@ -100,8 +100,14 @@ void buttonUp(uint8_t button) {
 void buttonLongDown(uint8_t button) {
 	if (buttonState[0] && buttonState[1] && button == 1) {
 		if (state.position.motor1speed == LOW_SPEED) {
+			SetMiddleSpeed();
+		}
+		else if (state.position.motor1speed == MIDDLE_SPEED)
+		{
 			SetHighSpeed();
-		} else {
+		}
+		else
+		{
 			SetLowSpeed();
 		}
 		state.motorBeepFlag = 1;
